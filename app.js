@@ -1,9 +1,17 @@
 //Requires
-var express = require('express');
-var mongoose = require('mongoose');
+const express = require('express');
+const mongoose = require('mongoose');
+const appRoutes = require('./routes/app');
+const usuarioRoutes = require('./routes/usuario');
+const bodyParser = require('body-parser');
+
 
 //Inicializar variables
-var app = express();
+const app = express();
+
+//BodyParser
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 //Conexion con la BBDD
 mongoose.connection.openUri('mongodb://localhost:27017/hospitaldb', (err, res) => {
@@ -11,13 +19,9 @@ mongoose.connection.openUri('mongodb://localhost:27017/hospitaldb', (err, res) =
   console.log('BBDD: \x1b[32m%s\x1b[0m','online');
 });
 
-//Rutas
-app.get('/', (req, res, next) => {
-  res.status(200).json({
-    ok: true,
-    mensaje: 'Peticion realizada correctamente'
-  });
-})
+//Rutas importadas
+app.use('/usuarios', usuarioRoutes);
+app.use('/', appRoutes);
 
 //Escuchr peticiones
 app.listen(3000, () => {
