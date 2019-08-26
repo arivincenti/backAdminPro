@@ -1,29 +1,28 @@
 //Requires
 const express = require('express');
-const mongoose = require('mongoose');
-const appRoutes = require('./routes/app');
-const usuarioRoutes = require('./routes/usuario');
+const mongoose = require('./database');
 const bodyParser = require('body-parser');
+const morgan = require('morgan');
 
 
 //Inicializar variables
 const app = express();
 
-//BodyParser
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+//Settings
+app.set('port', process.env.PORT || 3000);
 
-//Conexion con la BBDD
-mongoose.connection.openUri('mongodb://localhost:27017/hospitaldb', (err, res) => {
-  if(err) throw err;
-  console.log('BBDD: \x1b[32m%s\x1b[0m','online');
-});
+//Middlewares
+//app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.json());
+app.use(morgan('dev'));
 
-//Rutas importadas
-app.use('/usuarios', usuarioRoutes);
-app.use('/', appRoutes);
 
-//Escuchr peticiones
-app.listen(3000, () => {
-  console.log('Express server corriendo en el puerto 3000: \x1b[32m%s\x1b[0m','online');
+//Rutas
+app.use('/login', require('./routes/login.routes'));
+app.use('/usuarios', require('./routes/usuario.routes'));
+app.use('/', require('./routes/app.routes'));
+
+//Start server
+app.listen(app.get('port'), () => {
+  console.log('Express server corriendo en el puerto ' + app.get('port') + ': \x1b[32m%s\x1b[0m','online');
 });
