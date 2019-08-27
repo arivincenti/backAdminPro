@@ -18,7 +18,7 @@ hospitalController.getHospitales = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       ok: false,
-      message: 'Error al cargar los hopistales',
+      message: 'Error al cargar los hopistale',
       errors: error
     });
   }
