@@ -28,7 +28,7 @@ loginController.authentication = async (req, res) => {
 
     //Se crea el token si todo va bien
     usuario.password = ':)';
-    var token = jwt.sign({ usuario: usuario }, SEED, { expiresIn: 3600 });
+    let token = jwt.sign({ usuario: usuario }, SEED, { expiresIn: 14000 });
 
     res.status(200).json({
       ok: true,

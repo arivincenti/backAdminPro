@@ -20,6 +20,8 @@ app.use(morgan('dev'));
 //Rutas
 app.use('/login', require('./routes/login.routes'));
 app.use('/usuarios', require('./routes/usuario.routes'));
+app.use('/hospitales', require('./routes/hospital.routes'));
+app.use('/medicos', require('./routes/medico.routes'));
 app.use('/', require('./routes/app.routes'));
 
 //Start server

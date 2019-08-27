@@ -29,9 +29,9 @@ userController.getUsers = async (req, res) => {
 // ==================================================
 
 userController.createUser = async (req, res) => {
-  var body = req.body;
-
+  
   try {
+    var body = req.body;
     var usuario = new Usuario({
       nombre: body.nombre,
       email: body.email,
@@ -61,11 +61,11 @@ userController.createUser = async (req, res) => {
 // ==================================================
 
 userController.updateUser = async (req, res) => {
-  var id = req.params.id;
-  var body = req.body;
-
+  
   try {
-    let usuario = await Usuario.findById(id);
+    let id = req.params.id;
+    let body = req.body;
+    let usuario = await Usuario.findByIdAndUpdate(id, body, {new: true});
 
     if (!usuario) {
       return res.status(400).json({
@@ -77,17 +77,12 @@ userController.updateUser = async (req, res) => {
       });
     }
 
-    usuario.nombre = body.nombre;
-    usuario.email = body.email;
-    usuario.role = body.role;
-
-    let usuarioGuardado = await usuario.save();
-
-    usuarioGuardado.password = ':)';
+    //Seteamos el password para no devolverlo en la respuesta
+    usuario.password = ':)';
 
     res.status(200).json({
       ok: true,
-      usuario: usuarioGuardado
+      usuario: usuario
     });
 
   } catch (error) {

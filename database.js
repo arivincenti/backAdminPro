@@ -9,5 +9,6 @@ mongoose.connect(URI, { useNewUrlParser: true }).then(db => {
 });
 
 mongoose.set('useCreateIndex', true);
+mongoose.set('useFindAndModify', false);
 
 module.exports = mongoose;
