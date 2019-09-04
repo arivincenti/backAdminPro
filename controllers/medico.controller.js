@@ -6,11 +6,23 @@ const Medico = require('../models/medico');
 // ==================================================
 medicoController.getMedicos = async (req, res) => {
   try {
-    let medicos = await Medico.find();
+
+    let desde = req.query.desde || 0;
+    desde = Number(desde);
+
+    let count = await Medico.count();
+
+    let medicos = await Medico.find()
+      .populate('usuario')
+      .populate('hospital')
+      .skip(desde)
+      .limit(5);
+
     res.status(200).json({
       ok: true,
       message: 'Lista de medicos',
       data: medicos,
+      total: count,
       usuario: req.usuario
     })
 

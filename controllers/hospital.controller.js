@@ -7,14 +7,24 @@ const Hospital = require('../models/hospital');
 hospitalController.getHospitales = async (req, res) => {
   try {
 
-    let hospitales = await Hospital.find();
+    let desde = req.query.desde || 0;
+    desde = Number(desde);
+
+    let count = await Hospital.count();
+
+    let hospitales = await Hospital.find()
+      .populate('usuario')
+      .skip(desde)
+      .limit(5);
 
     res.status(200).json({
       ok: true,
       message: 'Hospitales con exito',
       data: hospitales,
+      total: count,
       usuario: req.usuario
     });
+
   } catch (error) {
     res.status(500).json({
       ok: false,
