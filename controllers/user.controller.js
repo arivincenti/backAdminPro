@@ -77,6 +77,11 @@ userController.updateUser = async (req, res) => {
   try {
     let id = req.params.id;
     let body = req.body;
+    
+    if(req.body.password){
+      req.body.password = bcrypt.hashSync(req.body.password, 10)
+    }
+
     let usuario = await Usuario.findByIdAndUpdate(id, body, {new: true});
 
     if (!usuario) {
