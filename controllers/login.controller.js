@@ -48,25 +48,26 @@ loginController.googleAuthentication = async (req, res) => {
 
     if (usuario) {
       if (usuario.google === false) {
-        //El usuario ya existe en la base de datos pero creo us cuenta con la autenticacion normal
+        //El usuario ya existe en la base de datos pero creo su cuenta con la autenticacion normal
         return res.status(400).json({
           ok: false,
           message: "Debe usar su autenticacion normal"
         });
       } else {
+        //Como el usuario existe pero creó su cuenta a traves de google se le asigna un token para nuestra app
         await generateToken(usuario, res);
       }
     } else {
-      //El usuario no existe asi que hay que crearlo
+      //El usuario no existe en la base de datos asi que hay que crearlo y se le asigna la propiedad "usuario de google"
       let usuario = new Usuario();
 
       usuario.nombre = googleUser.nombre;
       usuario.email = googleUser.email;
       usuario.img = googleUser.img;
       usuario.google = true;
+      usuario.password = ":)";
 
       const usuarioSaved = await usuario.save();
-      usuarioSaved.password = ":)";
 
       await generateToken(usuarioSaved, res);
     }

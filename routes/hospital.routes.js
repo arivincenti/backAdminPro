@@ -9,6 +9,11 @@ const hospitalController = require('../controllers/hospital.controller');
 router.get('/', verifyToken, hospitalController.getHospitales);
 
 // ==================================================
+// Obtener un hospital
+// ==================================================
+router.get('/:id', verifyToken, hospitalController.getHospital);
+
+// ==================================================
 // Crear un hospital
 // ==================================================
 router.post('/', verifyToken, hospitalController.createHospital);

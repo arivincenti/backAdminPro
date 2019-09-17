@@ -15,7 +15,7 @@ userController.getUsers = async (req, res) => {
 
     let count = await Usuario.count();
 
-    let usuarios = await Usuario.find({}, 'nombre email img role')
+    let usuarios = await Usuario.find({}, 'nombre email img role google')
     .skip(desde)
     .limit(5)
     .exec();

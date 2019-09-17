@@ -19,13 +19,13 @@ router.post('/', userController.createUser);
 // Actualizar Usuario
 // ==================================================
 
-router.put('/:id', userController.updateUser);
+router.put('/:id', verifyToken, userController.updateUser);
 
 // ==================================================
 // Borrar un usuario
 // ==================================================
 
-router.delete('/:id', userController.deleteUser);
+router.delete('/:id', verifyToken, userController.deleteUser);
 
 
 module.exports = router;

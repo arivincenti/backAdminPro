@@ -14,15 +14,23 @@ searchController.searchAll = async (req, res) => {
 
     //let hospitales = await Hospital.find({"$text": { "$search": req.params.busqueda }});
 
-    let hospitales = await Hospital.find({ nombre: regExp })
+    let hospitales = await Hospital.find({
+        nombre: regExp
+      })
       .populate('usuario');
 
-    let medicos = await Medico.find({ nombre: regExp })
+    let medicos = await Medico.find({
+        nombre: regExp
+      })
       .populate('usuario')
       .populate('hospital');
 
     let usuarios = await Usuario.find({}, "nombre email role")
-      .or([{ nombre: regExp }, { email: regExp }]);
+      .or([{
+        nombre: regExp
+      }, {
+        email: regExp
+      }]);
 
     res.status(200).json({
       ok: true,
@@ -55,34 +63,45 @@ searchController.searchInToCollection = async (req, res) => {
 
     //let hospitales = await Hospital.find({"$text": { "$search": req.params.busqueda }});
 
-    switch(collection){
-      case 'hospitales': data = await Hospital.find({ nombre: regExp })
-      .populate('usuario');
-      break;
+    switch (collection) {
+      case 'hospitales':
+        data = await Hospital.find({
+            nombre: regExp
+          })
+          .populate('usuario');
+        break;
 
-      case 'medicos': data= await Medico.find({ nombre: regExp })
-      .populate('usuario')
-      .populate('hospital');
-      break;
+      case 'medicos':
+        data = await Medico.find({
+            nombre: regExp
+          })
+          .populate('usuario')
+          .populate('hospital');
+        break;
 
-      case 'usuarios': data = await Usuario.find({}, "nombre email role")
-      .or([{ nombre: regExp }, { email: regExp }]);
-      break;
+      case 'usuarios':
+        data = await Usuario.find({}, "nombre email role img google")
+          .or([{
+            nombre: regExp
+          }, {
+            email: regExp
+          }]);
+        break;
 
       default:
-          res.status(500).json({
-            ok: false,
-            message: 'La busqueda solo se puede realizar sobre las collecciones "hospitales", "medicos" o "usuarios"',
-            errors: {
-              message: "Error al realizar la busqueda"
-            }
-          });
+        res.status(500).json({
+          ok: false,
+          message: 'La busqueda solo se puede realizar sobre las collecciones "hospitales", "medicos" o "usuarios"',
+          errors: {
+            message: "Error al realizar la busqueda"
+          }
+        });
     }
 
     res.status(200).json({
       ok: true,
       message: 'Busqueda realizada con exito',
-      [collection]: data
+      data: data
     });
 
   } catch (error) {

@@ -1,39 +1,69 @@
 const medicoController = {};
-const Medico = require('../models/medico');
+const Medico = require("../models/medico");
 
 // ==================================================
 // Obtener medicos
 // ==================================================
 medicoController.getMedicos = async (req, res) => {
   try {
-
     let desde = req.query.desde || 0;
     desde = Number(desde);
 
     let count = await Medico.count();
 
     let medicos = await Medico.find()
-      .populate('usuario')
-      .populate('hospital')
+      .populate("usuario")
+      .populate("hospital")
       .skip(desde)
       .limit(5);
 
     res.status(200).json({
       ok: true,
-      message: 'Lista de medicos',
+      message: "Lista de medicos",
       data: medicos,
       total: count,
       usuario: req.usuario
-    })
-
+    });
   } catch (error) {
     res.status(500).json({
       ok: false,
-      message: 'Error en get medicos',
+      message: "Error en get medicos",
       errors: error
-    })
+    });
   }
-}
+};
+
+// ==================================================
+// Obtener un medico
+// ==================================================
+medicoController.getMedico = async (req, res) => {
+  try {
+    let { id } = req.params;
+    let medico = await Medico.findById(id)
+      .populate("usuario")
+      .populate("hospital");
+
+    if (!medico) {
+      res.status(400).json({
+        ok: false,
+        message: "No se encontro el medico con el id " + id
+      });
+    }
+
+    res.status(200).json({
+      ok: true,
+      message: "Lista de medicos",
+      data: medico,
+      usuario: req.usuario
+    });
+  } catch (error) {
+    res.status(500).json({
+      ok: false,
+      message: "Error en get medico",
+      errors: error
+    });
+  }
+};
 
 // ==================================================
 // Crear un medico
@@ -48,19 +78,18 @@ medicoController.createMedico = async (req, res) => {
 
     res.status(200).json({
       ok: true,
-      message: 'El medico se creo con éxito',
+      message: "El medico se creo con éxito",
       data: medico,
       usuario: req.usuario
     });
-
   } catch (error) {
     res.status(500).json({
       ok: false,
-      message: 'Error al crear un medico',
+      message: "Error al crear un medico",
       errors: error
     });
   }
-}
+};
 
 // ==================================================
 // Actualizar un medico
@@ -78,28 +107,27 @@ medicoController.updateMedico = async (req, res) => {
     if (!medico) {
       return res.status(400).json({
         ok: false,
-        message: 'Error al buscar el medico con id ' + id,
+        message: "Error al buscar el medico con id " + id,
         errors: {
-          message: 'No existe un medico con este id'
+          message: "No existe un medico con este id"
         }
       });
     }
 
     res.status(200).json({
       ok: true,
-      message: 'Medico actualizado con éxito',
+      message: "Medico actualizado con éxito",
       data: medico,
       usuario: req.usuario
     });
-
   } catch (error) {
     res.status(500).json({
       ok: false,
-      message: 'Error al actualizar un medico',
+      message: "Error al actualizar un medico",
       errors: error
     });
   }
-}
+};
 
 // ==================================================
 // Eliminar un medico
@@ -114,27 +142,26 @@ medicoController.deleteMedico = async (req, res) => {
     if (!medico) {
       return res.status(400).json({
         ok: false,
-        message: 'Error al buscar el medico con id ' + id,
+        message: "Error al buscar el medico con id " + id,
         errors: {
-          message: 'No existe un medico con este id'
+          message: "No existe un medico con este id"
         }
       });
     }
 
     res.status(200).json({
       ok: true,
-      message: 'El medico se elimino con éxito',
+      message: "El medico se elimino con éxito",
       data: medico,
       usuario: req.usuario
-    })
-
+    });
   } catch (error) {
     res.status(500).json({
       ok: false,
-      message: 'Error al eliminar un medico',
+      message: "Error al eliminar un medico",
       errors: error
-    })
+    });
   }
-}
+};
 
 module.exports = medicoController;
