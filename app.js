@@ -6,6 +6,7 @@ const morgan = require('morgan');
 const cors = require('cors')
 const fileUpload = require('express-fileupload');
 
+
 //Inicializar variables
 const app = express();
 

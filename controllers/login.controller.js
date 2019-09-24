@@ -10,7 +10,6 @@ const Usuario = require("../models/usuario");
 // ==================================================
 // Autenticacion de google
 // ==================================================
-
 async function verify(token) {
   const ticket = await client.verifyIdToken({
     idToken: token,
@@ -30,10 +29,14 @@ async function verify(token) {
   };
 }
 
+// ==================================================
+// Google Atuhentication
+// ==================================================
 loginController.googleAuthentication = async (req, res) => {
   try {
     let token = req.body.token;
 
+    //Verifica que el token de google sea válido, si no lo es retorna el error
     var googleUser = await verify(token).catch(error => {
       return res.status(403).json({
         ok: false,
@@ -55,6 +58,7 @@ loginController.googleAuthentication = async (req, res) => {
         });
       } else {
         //Como el usuario existe pero creó su cuenta a traves de google se le asigna un token para nuestra app
+        usuario.password = ':)';
         await generateToken(usuario, res);
       }
     } else {
@@ -71,7 +75,6 @@ loginController.googleAuthentication = async (req, res) => {
 
       await generateToken(usuarioSaved, res);
     }
-
   } catch (error) {
     res.status(500).json({
       ok: false,
@@ -80,11 +83,10 @@ loginController.googleAuthentication = async (req, res) => {
   }
 };
 
-
 // ==================================================
 // Autenticacion normal
 // ==================================================
-loginController.authentication = async (req, res) => {
+loginController.login = async (req, res) => {
   try {
     let body = req.body;
     let usuario = await Usuario.findOne({
@@ -105,11 +107,9 @@ loginController.authentication = async (req, res) => {
       });
     }
 
-    usuario.password = ":)";
+    usuario.password = ':)';
     //Se crea el token si todo va bien
-    
     await generateToken(usuario, res);
-    
   } catch (error) {
     res.status(500).json({
       ok: false,
@@ -119,21 +119,67 @@ loginController.authentication = async (req, res) => {
 };
 
 // ==================================================
+// Renovar Token
+// ==================================================
+loginController.realoadToken = (req, res) => {
+  try{
+    generateToken(req.usuario, res);
+  }catch(error){
+    return res.status(500).json({
+      ok: false,
+      message: error
+    });
+  }
+}
+
+// ==================================================
 // Generacion de token
 // ==================================================
 async function generateToken(usuario, res) {
-  let token = jwt.sign(
-    { usuario: usuario },
-    SEED,
-    { expiresIn: 14000 }
-  );
+  let token = jwt.sign({ usuario: usuario }, SEED, { expiresIn: 14000 });
 
   return res.status(200).json({
     ok: true,
     data: usuario,
     token: token,
-    id: usuario._id
+    id: usuario._id,
+    menu: obtenerMenu(usuario.role)
   });
+}
+
+
+// ==================================================
+// Menú dinamico (Deberia venir desde la base de datos)
+// ==================================================
+function obtenerMenu(ROLE) {
+  menu = [
+    {
+      title: "Principal",
+      icon: "mdi mdi-gauge",
+      submenu: [
+        { subtitle: "Dashboard", url: "/dashboard" },
+        { subtitle: "Graphics", url: "/graphics1" },
+        { subtitle: "Progress", url: "/progress" },
+        { subtitle: "Promises", url: "/promises" },
+        { subtitle: "Rxjs", url: "/rxjs" }
+      ]
+    },
+    {
+      title: "Mantenimientos",
+      icon: "mdi mdi-folder-lock-open",
+      submenu: [
+        // { subtitle: "Usuarios", url: "/usuarios" },
+        { subtitle: "Medicos", url: "/medicos" },
+        { subtitle: "Hospitales", url: "/hospitales" }
+      ]
+    }
+  ];
+
+  if (ROLE === "ADMIN_ROLE") {
+    menu[1].submenu.unshift({ subtitle: "Usuarios", url: "/usuarios" });
+  }
+
+  return menu;
 }
 
 module.exports = loginController;

@@ -77,12 +77,8 @@ userController.updateUser = async (req, res) => {
   try {
     let id = req.params.id;
     let body = req.body;
-    
-    if(req.body.password){
-      req.body.password = bcrypt.hashSync(req.body.password, 10)
-    }
 
-    let usuario = await Usuario.findByIdAndUpdate(id, body, {new: true});
+    let usuario = await Usuario.findById(id);
 
     if (!usuario) {
       return res.status(400).json({
@@ -93,6 +89,12 @@ userController.updateUser = async (req, res) => {
         }
       });
     }
+
+    usuario.nombre = body.nombre;
+    usuario.email = body.email;
+    usuario.role = body.role;
+
+    usuario = await usuario.save();
 
     //Seteamos el password para no devolverlo en la respuesta
     usuario.password = ':)';

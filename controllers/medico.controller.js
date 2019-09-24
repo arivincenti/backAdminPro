@@ -100,9 +100,7 @@ medicoController.updateMedico = async (req, res) => {
     let id = req.params.id;
     let body = req.body;
 
-    let medico = await Medico.findByIdAndUpdate(id, body, {
-      new: true
-    });
+    let medico = await Medico.findByIdAndUpdate(id, body, { new: true });
 
     if (!medico) {
       return res.status(400).json({

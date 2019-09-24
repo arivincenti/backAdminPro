@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { verifyToken } = require('../middlewares/authentication');
+const { verifyToken, verifyAdminOrMyself } = require('../middlewares/authentication');
 const userController = require('../controllers/user.controller');
 
 // ==================================================
@@ -19,7 +19,7 @@ router.post('/', userController.createUser);
 // Actualizar Usuario
 // ==================================================
 
-router.put('/:id', verifyToken, userController.updateUser);
+router.put('/:id', [verifyToken, verifyAdminOrMyself], userController.updateUser);
 
 // ==================================================
 // Borrar un usuario
